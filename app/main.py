@@ -83,7 +83,7 @@ app.add_middleware(
 agent = None
 
 
-@app.lifespan("startup")  # Changed from @app.on_event("startup")
+@app.on_event("startup")
 async def startup_event():
     """Initialize the agent on application startup."""
     global agent

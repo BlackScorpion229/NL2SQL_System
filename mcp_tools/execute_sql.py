@@ -4,6 +4,7 @@ from loguru import logger
 from database.connection import db_manager
 import re
 from app.rbac_policy import is_authorized
+import sqlparse
 
 
 def execute_sql(sql: str, role: str = "admin") -> Dict[str, Any]:
@@ -122,7 +123,6 @@ def _validate_sql_access(sql: str, role: str) -> None:
         raise ImportError("sqlglot is required for RBAC validation")
 
     try:
-        import sqlparse
         from sqlparse.sql import IdentifierList, Identifier
         from sqlparse.tokens import Keyword, DML
     except ImportError:

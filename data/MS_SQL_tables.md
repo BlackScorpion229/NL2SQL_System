@@ -22,8 +22,6 @@ CREATE TABLE customers (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 ```
 
----
-
 ### 2️⃣ suppliers
 
 ```sql
@@ -43,8 +41,6 @@ CREATE TABLE suppliers (
     KEY idx_supplier_active (is_active)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 ```
-
----
 
 ### 3️⃣ products
 
@@ -71,8 +67,6 @@ CREATE TABLE products (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 ```
 
----
-
 ### 4️⃣ orders
 
 ```sql
@@ -94,8 +88,6 @@ CREATE TABLE orders (
         FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 ```
-
----
 
 ### 5️⃣ order_items
 
@@ -120,7 +112,7 @@ CREATE TABLE order_items (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 ```
 
---- End of final code. Happy querying! 🎉
+End of final code. Happy querying! 🎉
 
 | Table       | Ideal Record Count      | Why this works                              |
 | ----------- | ----------------------- | ------------------------------------------- |
@@ -130,8 +122,6 @@ CREATE TABLE order_items (
 | orders      | **50,000 – 300,000**    | Time-series + behavioral depth              |
 | order_items | **150,000 – 1,000,000** | Where analytics actually live               |
 
----
-
 # Recommended “Perfect Demo Dataset”
 customers     → 10,000
 suppliers     → 100
@@ -139,9 +129,8 @@ products      → 2,500
 orders        → 120,000
 order_items   → 450,000
 
-
+---
 # Business Questions for Analytics / NL-to-SQL
-
 ---
 
 ## 1. Customer-related questions
@@ -155,8 +144,6 @@ order_items   → 450,000
 - Which customers are inactive?
 - Top 5 customers by total purchase amount.
 
----
-
 ## 2. Order-related questions
 
 - How many orders are Delivered?
@@ -168,8 +155,6 @@ order_items   → 450,000
 - Which payment method is used most?
 - Orders with shipping cost more than 15.
 
----
-
 ## 3. Order item (line-level) questions
 
 - Total quantity sold per product.
@@ -179,8 +164,6 @@ order_items   → 450,000
 - Order items with Pending status.
 - Total tax collected per order.
 - Top 5 products by line total.
-
----
 
 ## 4. Product-related questions
 
@@ -192,8 +175,6 @@ order_items   → 450,000
 - Top 3 most expensive products.
 - Products created in 2024.
 
----
-
 ## 5. Supplier-related questions
 
 - List all active suppliers.
@@ -202,8 +183,6 @@ order_items   → 450,000
 - Suppliers with Net 60 payment terms.
 - How many products per supplier?
 - Recently registered suppliers.
-
----
 
 ## 6. Cross-table (joins) questions ⭐  
 *(Very important for NL-to-SQL)*
@@ -217,8 +196,6 @@ order_items   → 450,000
 - Orders and their item details.
 - Products sold by each supplier.
 
----
-
 ## 7. Business / analytics questions
 
 - Monthly revenue trend.
@@ -229,8 +206,6 @@ order_items   → 450,000
 - Which products generate highest profit?  
   *(price – cost)*
 
----
-
 ## 8. Data quality / ops-style questions
 
 - Orders without delivery date.
@@ -238,8 +213,6 @@ order_items   → 450,000
 - Customers without phone number.
 - Orders with unusually high discount.
 - Inactive suppliers.
-
----
 
 ## 9. Natural language (how users REALLY type)
 
@@ -250,8 +223,6 @@ order_items   → 450,000
 - “Give me cancelled orders”
 - “Top selling electronics”
 
----
-
 ## 10. Advanced (good for demos)
 
 - Customer lifetime value.
@@ -259,3 +230,262 @@ order_items   → 450,000
 - Average delivery time.
 - Revenue by country.
 - Profit by supplier.
+
+---
+# Text-to-SQL System – User Stories Track & Admin Stories Track
+This document defines **end-to-end stories** for both **Business Users** and **Admins**, based strictly on your existing tables, columns, and access rules.
+---
+
+## 1. Business User Stories Track
+
+### Role Summary
+- Read-only access
+- Can query **safe columns only**
+- Can use **2–3 table joins** (approved paths)
+- No PII, no cost, no supplier data
+
+## Story U1: Sales Overview
+
+**Goal:** Understand overall sales performance
+
+**User Questions:**
+- What is total sales today?
+- Sales this month
+- Total orders this month
+- Average order value
+
+**Tables Used:**
+- orders
+
+**Output:**
+- KPI cards: Total Revenue, Order Count, Avg Order Value
+- Table: order_date, total_amount, order_status
+
+## Story U2: Order Tracking
+
+**Goal:** Track order status and flow
+
+**User Questions:**
+- How many orders are pending?
+- Show delivered orders
+- Cancelled orders count
+
+**Tables Used:**
+- orders
+
+**Output:**
+- KPI: Pending / Delivered / Cancelled orders
+- Table: order_id, order_date, delivery_date, order_status, payment_method
+
+## Story U3: Product Performance
+
+**Goal:** See what products are selling well
+
+**User Questions:**
+- Top selling products
+- Revenue by product
+- Revenue by category
+
+**Tables Used (Join):**
+- orders → order_items → products
+
+**Output:**
+- Table: product_name, category, quantity_sold, total_revenue
+- Chart: Revenue by category
+
+## Story U4: Inventory Visibility
+
+**Goal:** Monitor stock levels
+
+**User Questions:**
+- Low stock products
+- Out of stock products
+- Discontinued products
+
+**Tables Used:**
+- products
+
+**Output:**
+- Table: product_name, category, stock_quantity, is_discontinued
+- Alerts for low stock
+
+## Story U5: Customer Overview
+
+**Goal:** Understand customer base
+
+**User Questions:**
+- How many customers do we have?
+- Active customers count
+- Customers by segment
+
+**Tables Used:**
+- customers
+
+**Output:**
+- KPI: Total Customers, Active Customers
+- Table: customer_id, first_name, last_name, customer_segment, is_active
+
+## Story U6: Customer Behavior
+
+**Goal:** Analyze customer purchasing behavior
+
+**User Questions:**
+- Revenue by customer segment
+- Orders by customer segment
+
+**Tables Used (Join):**
+- customers → orders → order_items
+
+**Output:**
+- Table: customer_segment, total_orders, total_revenue
+
+## Story U7: Time-based Analysis
+
+**Goal:** Analyze trends over time
+
+**User Questions:**
+- Sales last month
+- Orders this year
+- Monthly revenue trend
+
+**Tables Used:**
+- orders
+
+**Output:**
+- Table: month, total_revenue, order_count
+- Line chart: monthly revenue
+
+## Story U8: Payment Analysis
+
+**Goal:** Understand payment preferences
+
+**User Questions:**
+- Most used payment method
+- Revenue by payment method
+
+**Tables Used:**
+- orders
+
+**Output:**
+- Table: payment_method, order_count, total_revenue
+
+# 2. Admin Stories Track
+
+### Role Summary
+- Full read access to all tables
+- Can see PII, cost, supplier data
+- Can run complex joins & calculations
+- Can build dashboards and reports
+
+## Story A1: Executive Business Overview
+
+**Goal:** Monitor overall business health
+
+**Admin Questions:**
+- Total revenue by month
+- Total orders and customers
+- Revenue by category
+
+**Tables Used:**
+- orders, order_items, products, customers
+
+**Output:**
+- Executive KPIs
+- Monthly revenue dashboard
+
+## Story A2: Customer Analytics
+
+**Goal:** Deep customer insights
+
+**Admin Questions:**
+- Top customers by revenue
+- Customer lifetime value
+- Inactive customers
+
+**Tables Used:**
+- customers, orders, order_items
+
+**Output:**
+- Customer ranking tables
+- CLV metrics
+
+## Story A3: Product Profitability
+
+**Goal:** Understand product margins
+
+**Admin Questions:**
+- Profit per product
+- Margin by category
+
+**Tables Used:**
+- products, order_items
+
+**Output:**
+- Table: product_name, revenue, cost, profit, margin
+
+## Story A4: Inventory & Supply Chain
+
+**Goal:** Manage inventory and suppliers
+
+**Admin Questions:**
+- Low stock vs reorder level
+- Supplier lead time performance
+
+**Tables Used:**
+- products, suppliers
+
+**Output:**
+- Inventory alerts
+- Supplier performance table
+
+## Story A5: Order Operations
+
+**Goal:** Improve fulfillment
+
+**Admin Questions:**
+- Delivery delays
+- Cancellation reasons
+- Return rate
+
+**Tables Used:**
+- orders, order_items
+
+**Output:**
+- Ops KPIs
+- Order lifecycle dashboard
+
+## Story A6: Financial Controls
+
+**Goal:** Track discounts, tax, revenue leakage
+
+**Admin Questions:**
+- Total discount given
+- Tax collected by month
+- Net revenue
+
+**Tables Used:**
+- orders, order_items
+
+**Output:**
+- Finance summary tables
+
+# 3. Why This Structure Works
+
+- Clear separation of **user vs admin intent**
+- Safe Text-to-SQL generation
+- Easy to map stories → SQL → dashboards
+- Production-ready RBAC design
+
+## 4. Next Recommended Steps
+
+1. Convert each story into SQL views
+2. Create NL → SQL training pairs per story
+3. Add role-aware prompt injection
+4. Add SQL validation & guardrails
+
+**This document can be directly used for:**
+- Product design
+- Model training
+- Interview explanation
+- Stakeholder walkthrough
+---

@@ -31,13 +31,11 @@ RBAC_POLICY: Dict[str, Dict[str, Union[str, Dict[str, List[str]]]]] = {
             "products": [
                 "product_id", "product_name",
                 "category", "sub_category",
-                "brand", "price",
-                "is_discontinued", "created_date", "last_updated"
+                "brand", "price", "stock_quantity", "description",
+                "is_discontinued"
             ],
             "suppliers": [
-                "supplier_id", "supplier_name",
-                "country", "city",
-                "is_active", "registration_date"
+                "supplier_id", "supplier_name", "is_active"
             ],
         }
     }
