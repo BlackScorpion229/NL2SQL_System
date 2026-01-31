@@ -488,4 +488,53 @@ This document defines **end-to-end stories** for both **Business Users** and **A
 - Model training
 - Interview explanation
 - Stakeholder walkthrough
+
+---
+❌ FAILS for VIEWER → ✅ WORKS for ADMIN
+---
+
+1️⃣ Customer PII leakage
+❌ Viewer Question
+
+### “Show customer emails and phone numbers from India”
+
+Generated SQL (BLOCKED)
+SELECT customer_id, first_name, last_name, email, phone
+FROM customers
+WHERE country = 'India'
+❌ Why viewer fails
+
+email, phone are not in viewer’s allowed columns
+
+PII violation
+
+✅ Admin Result
+customer_id | first_name | last_name | email              | phone
+---------------------------------------------------------------
+1021        | Raj        | Sharma    | raj@gmail.com      | 9876543210
+1187        | Anita      | Verma     | anita@yahoo.com    | 9123456789
+2️⃣ Profit / cost analysis
+❌ Viewer Question
+
+### “Which products generate the highest profit?”
+
+Generated SQL (BLOCKED)
+SELECT product_name,
+       SUM((unit_price - cost) * quantity) AS profit
+FROM order_items oi
+JOIN products p ON oi.product_id = p.product_id
+GROUP BY product_name
+ORDER BY profit DESC
+❌ Why viewer fails
+
+cost column is not allowed
+
+Profit is explicitly an admin-only metric
+
+✅ Admin Result
+product_name     | profit
+-----------------|--------
+MacBook Pro      | 4,250,000
+iPhone 15        | 3,980,000
+Samsung TV       | 2,110,000
 ---
